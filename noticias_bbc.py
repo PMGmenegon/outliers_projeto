@@ -24,4 +24,5 @@ for item in itens:
 noticias_links = list(set(noticias_links)) # Remover duplicatas
 
 for i, link in enumerate(noticias_links, 1):
+
     print(f'{i}. {link}')
