@@ -31,17 +31,17 @@ def select_all():
 
 def select_news(**kwargs):
     key, value = list(kwargs.items())[0]
-    return run_sql((f'''
+    return run_sql(f'''
         SELECT *
         FROM news
-        WHERE {key} = ?
+        WHERE {key} = ?     
         ORDER BY date
     ''',
-    (value,)))
+    (value,))
 
 def insert_news(link, date, title, body):
     return run_sql(f'''
-        INSERT INTO news(link, date, title, body)
+        INSERT OR IGNORE INTO news(link, date, title, body)
         VALUES(?, ?, ?, ?)
     ''',
     (link, date, title, body))

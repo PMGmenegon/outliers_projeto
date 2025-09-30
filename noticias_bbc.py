@@ -7,7 +7,7 @@ def get_links():
    resposta = requests.get(url) #pega o código fonte da página
 
    if resposta.status_code == 200: # verifica se arequisição foi bem sucedida
-      print(" 200, requisicao bem sucedida")
+      pass
    else:
       print( f'Código {resposta.status_code}! Erro na requisicao ' )    
 
