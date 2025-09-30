@@ -1,11 +1,11 @@
 import sqlite3
 
-def run_sql(sql: str):
+def run_sql(sql: str, values = ()):
     with sqlite3.connect("news.db") as con:
 
         cur = con.cursor()
 
-        res = cur.execute(sql)
+        res = cur.execute(sql, values)
         
         data = res.fetchall()
         
@@ -16,8 +16,9 @@ def run_sql(sql: str):
 def create_table():
     return run_sql(f'''
         CREATE TABLE IF NOT EXISTS news(
-            id INTEGER PRIMARY KEY,
+            link TEXT PRIMARY KEY,
             date INT NOT NULL,
+            title TEXT NOT NULL,
             body TEXT NOT NULL
         )
     ''')
@@ -30,29 +31,33 @@ def select_all():
 
 def select_news(**kwargs):
     key, value = list(kwargs.items())[0]
-    return run_sql(f'''
-        SELECT body
+    return run_sql((f'''
+        SELECT *
         FROM news
-        WHERE {key} = {value}
-        ORDER BY id
-        LIMIT 7
-    ''')
+        WHERE {key} = ?
+        ORDER BY date
+    ''',
+    (value,)))
 
-def insert_news(date, body):
+def insert_news(link, date, title, body):
     return run_sql(f'''
-        INSERT INTO news(date, body)
-        VALUES({date}, '{body}')
-    ''')
+        INSERT INTO news(link, date, title, body)
+        VALUES(?, ?, ?, ?)
+    ''',
+    (link, date, title, body))
 
-def update_news(id, date, body):
+def update_news(link, date, title, body):
     return run_sql(f'''
         UPDATE news
-        SET date = {date}, body = '{body}'
-        WHERE id = {id}
-    ''')
+        SET date = ?, title = ?, body = ?
+        WHERE link = ?
+    ''',
+    (date, title, body, link))
 
-def delete_news(id):
+def delete_news(**kwargs):
+    key, value = list(kwargs.items())[0]
     return run_sql(f'''
         DELETE FROM news
-        WHERE id = {id}
-    ''')
+        WHERE {key} = ?
+    ''',
+    (value,))
